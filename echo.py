@@ -28,6 +28,15 @@ def send_document(chat_id:int,document):
     url = f'https://api.telegram.org/bot{TOKEN}/sendDocument'
     requests.get(url,params=payload)
 
+# send dice
+def send_dice(chat_id,emoji):
+    payload = {
+        'chat_id':chat_id ,
+        'emoji':emoji
+    }
+    url=f'https://api.telegram.org/bot{TOKEN}/sendDice'
+    requests.get(url,params=payload)
+
 
 # get Updates 
 def get_updates():
@@ -38,15 +47,16 @@ def get_updates():
     text = data['message'].get('text')
     photo = data['message'].get('photo')
     document = data['message'].get('document')
+    emoji=data['message'].get('emoji')
     chat_id = data['message']['chat']['id']
-    return chat_id, document, text, photo, update_id
+    return chat_id, document, text, photo, update_id,emoji
 
 
 # Last update id
 last_update_id = -1 
 # send message through loop 
 while True:
-    chat_id, document, text, photo, update_id = get_updates()
+    chat_id, document, text, photo, update_id, emoji = get_updates()
     if last_update_id != update_id:
         if text !=None:
             send_message(chat_id,text)
@@ -56,6 +66,9 @@ while True:
         elif document != None:
             document = document['file_id']
             send_document(chat_id,document)
+        elif emoji!=None:
+            emoji=emoj['dice']
+            send_dice(chat_id, emoji)
         last_update_id=update_id
 
 
